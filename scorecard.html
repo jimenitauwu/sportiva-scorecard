@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scorecard · Sportiva · EasyMatch</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Inter & Poppins for clean look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f7fc 0%, #e9eef4 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: bgFade 1.2s ease;
+        }
+
+        @keyframes bgFade {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .scorecard-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(2px);
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 40px -10px rgba(0,20,30,0.25), 0 8px 20px rgba(0,0,0,0.1);
+            padding: 2rem 1.5rem;
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .header-title h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            background: linear-gradient(135deg, #0B2D45, #1B4A6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            background: #1B4A6B;
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 6px 14px rgba(27,74,107,0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .badge i {
+            font-size: 1.2rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 1.8rem;
+            background: white;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02), 0 12px 28px -8px rgba(0,45,65,0.2);
+            transition: box-shadow 0.3s;
+        }
+
+        .table-container:hover {
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02), 0 18px 34px -8px #0b2d4540;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            min-width: 1100px;
+            background: white;
+            border-radius: 1.8rem;
+            overflow: hidden;
+            animation: tableFade 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes tableFade {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        th {
+            background: #0f2f40;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 1.2rem 1rem;
+            text-align: left;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.3px;
+            border-right: 1px solid #2a4b62;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 1.2rem 1rem;
+            vertical-align: top;
+            border-bottom: 1px solid #dae6ed;
+            background: white;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        tr {
+            transition: all 0.2s;
+        }
+
+        /* row hover effect */
+        tbody tr:hover td {
+            background: #f3faff;
+            transform: scale(1.002);
+            box-shadow: 0 2px 10px rgba(0,70,120,0.08) inset;
+        }
+
+        /* perspective column special style */
+        .perspective-cell {
+            background: #e6f0f7;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-right: 2px solid #b6d2e3;
+            color: #0b2d45;
+            vertical-align: middle;
+            text-align: center;
+            background: linear-gradient(145deg, #ddeaf3, #ecf3f9);
+        }
+
+        td.perspective-cell i {
+            font-size: 1.7rem;
+            display: block;
+            margin-bottom: 8px;
+            color: #1f5777;
+        }
+
+        /* lists inside cells */
+        ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            list-style-type: none;
+        }
+
+        li {
+            margin-bottom: 0.7rem;
+            line-height: 1.5;
+            position: relative;
+            padding-left: 1.4rem;
+        }
+
+        li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: #1f6e9f;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* indicator descriptions lighter */
+        .indicator-desc {
+            font-size: 0.88rem;
+            color: #2f4a60;
+            display: block;
+            margin-top: 0.1rem;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        strong {
+            color: #0e3d5a;
+            font-weight: 600;
+        }
+
+        /* small tags for metas/iniciativas */
+        .meta-item, .iniciativa-item {
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+
+        /* first column icon + text */
+        .persp-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        /* objective title */
+        .obj-title {
+            font-weight: 700;
+            color: #0a3142;
+            font-size: 1.05rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .obj-title i {
+            color: #1d6a9c;
+            font-size: 1.1rem;
+        }
+
+        /* footer note */
+        .footnote {
+            margin-top: 1.8rem;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 0.9rem;
+            color: #325b76;
+            font-weight: 500;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footnote i {
+            color: #1b4a6b;
+            font-size: 1.2rem;
+        }
+
+        .pill {
+            background: rgba(27,74,107,0.1);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(27,74,107,0.2);
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .header-title h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="scorecard-wrapper">
+    <div class="header-title">
+        <h1><i class="fas fa-table" style="color: #1B4A6B; margin-right: 10px;"></i> Balanced Scorecard · EasyMatch</h1>
+        <div class="badge"><i class="fas fa-futbol"></i> Sportiva · 2026-2027</div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Perspectiva</th>
+                    <th>Objetivo estratégico</th>
+                    <th>Indicadores (KPI)</th>
+                    <th>Metas (primeros 2 años)</th>
+                    <th>Iniciativas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ============= FINANCIERA (3 objectives) ============= -->
+                <tr>
+                    <td class="perspective-cell" rowspan="3">
+                        <div class="persp-content">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Financiera</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-coins"></i> 1. Sostenibilidad económica (ingresos recurrentes)</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Ingresos anuales</strong> <span class="indicator-desc">Total generado (comisiones, suscripciones, publicidad)</span></li>
+                            <li><strong>Margen de utilidad</strong> <span class="indicator-desc">% de ingresos convertido en ganancia después de costos</span></li>
+                            <li><strong>Flujo de caja mensual</strong> <span class="indicator-desc">Liquidez para cubrir gastos operativos</span></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Alcanzar punto de rentabilidad en 18 meses</li>
+                            <li>Flujo de caja positivo todos los meses (después del mes 12)</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Comisiones por reserva en EasyMatch</li>
+                            <li>Activar pagos digitales con Stripe</li>
+                            <li>Control financiero mensual con Power BI</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-cash-register"></i> 2. Ampliar fuentes de ingresos</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Ingreso promedio por usuario</strong> <span class="indicator-desc">Generación media por usuario activo</span></li>
+                            <li><strong>% ingresos comisión vs suscripción</strong> <span class="indicator-desc">Rentabilidad por modelo</span></li>
+                            <li><strong>Crecimiento porcentual anual</strong> <span class="indicator-desc">Aumento de ingresos interanual</span></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Crecimiento anual del 20%</li>
+                            <li>30% de usuarios activos migren a suscripción premium</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Plan de suscripción premium con beneficios</li>
+                            <li>Espacios de publicidad en la app</li>
+                            <li>Alianzas con marcas deportivas</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-file-invoice-dollar"></i> 3. Control de costos operativos y desarrollo</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Costo operativo mensual</strong></li>
+                            <li><strong>% reducción gastos tecnológicos</strong></li>
+                            <li><strong>Costo por adquisición de usuario</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Reducir costos operativos en 10% anual</li>
+                            <li>Optimizar licencias tecnológicas sin afectar rendimiento</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Revisión mensual de gastos en herramientas</li>
+                            <li>Negociación de planes empresariales</li>
+                            <li>Automatización de procesos</li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <!-- ============= CLIENTES (2 objectives) ============= -->
+                <tr>
+                    <td class="perspective-cell" rowspan="2">
+                        <div class="persp-content">
+                            <i class="fas fa-users"></i>
+                            <span>Clientes</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-smile"></i> 1. Aumentar satisfacción del usuario</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Nivel de satisfacción</strong> <span class="indicator-desc">encuestas dentro de la app</span></li>
+                            <li><strong>Calificación promedio</strong> <span class="indicator-desc">Play Store / App Store</span></li>
+                            <li><strong>Tiempo resolución tickets</strong> <span class="indicator-desc">Zendesk</span></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Calificación mínima 4.5 estrellas</li>
+                            <li>Resolver 90% de tickets en menos de 24h</li>
+                            <li>85% satisfacción en encuestas internas</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Evaluación después de cada partido</li>
+                            <li>Capacitación constante a soporte</li>
+                            <li>FAQ dentro de la app</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-user-check"></i> 2. Incrementar retención de usuarios</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Tasa de retención mensual</strong></li>
+                            <li><strong>Usuarios activos mensuales</strong></li>
+                            <li><strong>Frecuencia promedio de reservas</strong> <span class="indicator-desc">por usuario</span></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Retención del 60% después de 3 meses</li>
+                            <li>Aumentar reservas promedio a 2 por mes</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Recordatorios automáticos</li>
+                            <li>Programa de puntos / recompensas</li>
+                            <li>Notificaciones personalizadas</li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <!-- ============= PROCESOS (4 objectives) ============= -->
+                <tr>
+                    <td class="perspective-cell" rowspan="4">
+                        <div class="persp-content">
+                            <i class="fas fa-gears"></i>
+                            <span>Procesos</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-calendar-check"></i> 1. Optimizar proceso de reservas</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Tiempo promedio de reserva</strong></li>
+                            <li><strong>Número de errores en reservas</strong></li>
+                            <li><strong>% pagos exitosos</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Reserva en menos de 2 minutos</li>
+                            <li>Errores técnicos &lt; 2%</li>
+                            <li>98% pagos exitosos</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Mejora continua de interfaz</li>
+                            <li>Pruebas técnicas pre‑actualización</li>
+                            <li>Integración optimizada con Stripe</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-exclamation-triangle"></i> 2. Reducir incidencias y reclamos</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Número de tickets por mes</strong></li>
+                            <li><strong>Reincidencia de problemas</strong></li>
+                            <li><strong>% cancelaciones</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Reducir tickets 20% en primer año</li>
+                            <li>Disminuir cancelaciones injustificadas 15%</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Confirmación automática 24h antes</li>
+                            <li>Política clara de no‑show</li>
+                            <li>Sistema de reputación</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-code-branch"></i> 3. Mejorar eficiencia desarrollo tecnológico</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Tiempo desarrollo por funcionalidad</strong></li>
+                            <li><strong>Cumplimiento de sprints (Jira)</strong></li>
+                            <li><strong>Errores detectados en producción</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Cumplir 90% de sprints a tiempo</li>
+                            <li>Reducir errores producción 25%</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Uso disciplinado de Jira + GitHub</li>
+                            <li>Revisiones de código obligatorias</li>
+                            <li>Pruebas automatizadas pre‑despliegue</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-shield-halved"></i> 4. Fortalecer seguridad del sistema</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Incidentes de seguridad</strong></li>
+                            <li><strong>Actualizaciones de seguridad realizadas</strong></li>
+                            <li><strong>Cumplimiento políticas internas</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Cero brechas de seguridad</li>
+                            <li>100% equipos protegidos con McAfee</li>
+                            <li>Auditorías cada 6 meses</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Autenticación en dos pasos</li>
+                            <li>Escaneos automáticos de vulnerabilidades</li>
+                            <li>Capacitación en ciberseguridad</li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <!-- ============= APRENDIZAJE Y CRECIMIENTO (4 objectives) ============= -->
+                <tr>
+                    <td class="perspective-cell" rowspan="4">
+                        <div class="persp-content">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Aprendizaje<br>y Crecimiento</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-chalkboard-user"></i> 1. Capacitación continua del equipo</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Horas de capacitación por colaborador</strong></li>
+                            <li><strong>Certificaciones obtenidas</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>30 horas/persona al año</li>
+                            <li>1 certificación técnica anual por desarrollador</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Suscripción a plataformas de cursos</li>
+                            <li>Talleres internos mensuales</li>
+                            <li>Presupuesto anual para certificaciones</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-lightbulb"></i> 2. Fomentar innovación y mejora continua</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Mejoras implementadas por trimestre</strong></li>
+                            <li><strong>Propuestas internas aceptadas</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Mínimo 5 mejoras trimestrales</li>
+                            <li>Evaluar 100% de propuestas internas</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Retrospectivas Scrum</li>
+                            <li>Espacios formales para innovación</li>
+                            <li>Encuestas de mejora organizacional</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-handshake"></i> 3. Fortalecer cultura organizacional</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Satisfacción interna del equipo</strong></li>
+                            <li><strong>Participación en reuniones estratégicas</strong></li>
+                            <li><strong>Evaluación clima laboral</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Satisfacción interna > 85%</li>
+                            <li>Evaluaciones internas semestrales</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Espacios mensuales de retroalimentación</li>
+                            <li>Reconocimiento interno por desempeño</li>
+                            <li>Actividades de integración</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="obj-title"><i class="fas fa-globe"></i> 4. Preparar expansión internacional</div>
+                    </td>
+                    <td>
+                        <ul>
+                            <li><strong>Investigación de mercado realizada</strong></li>
+                            <li><strong>Adaptación tecnológica escalabilidad</strong></li>
+                            <li><strong>Alianzas fuera del país</strong></li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Estudio de mercado regional en 2 años</li>
+                            <li>Infraestructura lista para alto volumen</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li>Análisis competencia Centroamérica</li>
+                            <li>Evaluación legal para expansión</li>
+                            <li>Optimización técnica para mayor tráfico</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footnote">
+        <span class="pill"><i class="far fa-clock"></i> Metas a 2 años · 2026-2027</span>
+        <span><i class="fas fa-arrow-pointer"></i> Pasa el cursor sobre las filas para ver animación</span>
+        <span><i class="fas fa-code-branch"></i> Sportiva · EasyMatch</span>
+    </div>
+</div>
+<!-- small extra animation for entrance -->
+</body>
+</html>
